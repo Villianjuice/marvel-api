@@ -8,8 +8,8 @@ import './style/style.scss';
 
 const marvelService = new MarvelService()
 
-marvelService.getAllCharacters().then(data => console.log(data))
-marvelService.getCharacter(1010809).then(res => console.log(res))
+// marvelService.getAllCharacters().then(data => console.log(data))
+// marvelService.getCharacter(1010809).then(res => console.log(res))
 
 ReactDOM.render(
   <React.StrictMode>
