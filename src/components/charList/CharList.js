@@ -9,35 +9,53 @@ class CharList extends Component {
     characters: [],
     loading: true,
     error: false,
+    newItemsLoading: false,
+    offset: 300,
+    charsEnded: false
   };
   marvelService = new MarvelService();
   componentDidMount() {
-    this.getCharacters();
+    this.onRequest();
   }
 
-  onChars = (characters) => {
-    this.setState({ characters, loading: false });
+  onCharsLoaded = (newCharacters) => {
+    let ended = false
+    if (newCharacters.length < 9) {
+      ended = true
+    }
+    this.setState(({characters, offset}) => (
+      {
+        characters: [...characters, ...newCharacters],
+        loading: false,
+        newItemsLoading: false,
+        offset: offset + 9,
+        charsEnded: ended
+      }
+    ));
   };
   onError = () => {
     this.setState({ error: true, loading: false });
   };
-
-  getCharacters() {
+  onCharsLoading = () => {
+    this.setState({ newItemsLoading: true });
+  };
+  onRequest = (offset) => {
+    this.onCharsLoading();
     this.marvelService
-      .getAllCharacters()
-      .then((data) => this.onChars(data))
+      .getAllCharacters(offset)
+      .then(this.onCharsLoaded)
       .catch(this.onError);
-  }
+  };
 
   getItems(items) {
     const characters = items.map(({ id, name, thumbnail }) => {
-			let imgStyle = {objectFit : 'cover'};
-			if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-				imgStyle = {objectFit : 'unset'}
-			}
+      let imgStyle = { objectFit: 'cover' };
+      if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+        imgStyle = { objectFit: 'unset' };
+      }
       return (
         <li onClick={() => this.props.onCharSelected(id)} className="char__item" key={id}>
-          <img src={thumbnail} alt={name} style={imgStyle}/>
+          <img src={thumbnail} alt={name} style={imgStyle} />
           <div className="char__name">{name}</div>
         </li>
       );
@@ -46,14 +64,18 @@ class CharList extends Component {
   }
 
   render() {
-    const { characters, loading, error } = this.state;
+    const { characters, loading, error, newItemsLoading, offset, charsEnded } = this.state;
     const items = this.getItems(characters);
     return (
       <div className="char__list">
-				{loading ? <Spinner /> : null}
-				{error ? <ErrorMessage /> : null}
+        {loading ? <Spinner /> : null}
+        {error ? <ErrorMessage /> : null}
         {!(loading || error) ? items : null}
-        <button className="button button__main button__long">
+        <button
+          style={{display: charsEnded ? 'none' : 'block'}}
+          disabled={newItemsLoading}
+          onClick={() => this.onRequest(offset)}
+          className="button button__main button__long">
           <div className="inner">load more</div>
         </button>
       </div>
