@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types' 
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 import './charList.scss';
 import MarvelService from '../../services/MarvelService';
@@ -12,7 +12,7 @@ class CharList extends Component {
     error: false,
     newItemsLoading: false,
     offset: 300,
-    charsEnded: false
+    charsEnded: false,
   };
   marvelService = new MarvelService();
   componentDidMount() {
@@ -20,19 +20,17 @@ class CharList extends Component {
   }
 
   onCharsLoaded = (newCharacters) => {
-    let ended = false
+    let ended = false;
     if (newCharacters.length < 9) {
-      ended = true
+      ended = true;
     }
-    this.setState(({characters, offset}) => (
-      {
-        characters: [...characters, ...newCharacters],
-        loading: false,
-        newItemsLoading: false,
-        offset: offset + 9,
-        charsEnded: ended
-      }
-    ));
+    this.setState(({ characters, offset }) => ({
+      characters: [...characters, ...newCharacters],
+      loading: false,
+      newItemsLoading: false,
+      offset: offset + 9,
+      charsEnded: ended,
+    }));
   };
   onError = () => {
     this.setState({ error: true, loading: false });
@@ -42,20 +40,42 @@ class CharList extends Component {
   };
   onRequest = (offset) => {
     this.onCharsLoading();
-    this.marvelService
-      .getAllCharacters(offset)
-      .then(this.onCharsLoaded)
-      .catch(this.onError);
+    this.marvelService.getAllCharacters(offset).then(this.onCharsLoaded).catch(this.onError);
+  };
+
+  itemRefs = [];
+
+  setRef = (ref) => {
+    this.itemRefs.push(ref);
+  };
+  focusOnItem = (id) => {
+    this.itemRefs.forEach((item) => item.classList.remove('char__item_selected'));
+    this.itemRefs[id].classList.add('char__item_selected');
+    this.itemRefs[id].focus();  
   };
 
   getItems(items) {
-    const characters = items.map(({ id, name, thumbnail }) => {
+    const characters = items.map(({ id, name, thumbnail }, i) => {
       let imgStyle = { objectFit: 'cover' };
       if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = { objectFit: 'unset' };
       }
       return (
-        <li onClick={() => this.props.onCharSelected(id)} className="char__item" key={id}>
+        <li
+          tabIndex={0}
+          ref={this.setRef}
+          onClick={() => {
+            this.props.onCharSelected(id);
+            this.focusOnItem(i);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              this.props.onCharSelected(id);
+              this.focusOnItem(i);
+            }
+          }}
+          className="char__item"
+          key={id}>
           <img src={thumbnail} alt={name} style={imgStyle} />
           <div className="char__name">{name}</div>
         </li>
@@ -73,7 +93,7 @@ class CharList extends Component {
         {error ? <ErrorMessage /> : null}
         {!(loading || error) ? items : null}
         <button
-          style={{display: charsEnded ? 'none' : 'block'}}
+          style={{ display: charsEnded ? 'none' : 'block' }}
           disabled={newItemsLoading}
           onClick={() => this.onRequest(offset)}
           className="button button__main button__long">
@@ -85,7 +105,7 @@ class CharList extends Component {
 }
 
 CharList.propTypes = {
-  onCharSelected: PropTypes.func.isRequired
-}
+  onCharSelected: PropTypes.func.isRequired,
+};
 
 export default CharList;
