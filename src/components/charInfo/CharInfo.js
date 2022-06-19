@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import MarvelService from '../../services/MarvelService';
@@ -8,47 +8,47 @@ import Skeleton from '../skeleton/Skeleton';
 
 import './charInfo.scss';
 
-class CharInfo extends Component {
-  marService = new MarvelService();
-  state = {
-    char: null,
-    loading: false,
-    error: false,
+const CharInfo = ({charSelected}) => {
+  const [char, setChar] = useState(null) 
+  const [loading, setLoading] = useState(false)  
+  const [error, setError] = useState(false)  
+
+  const marService = new MarvelService();
+  useEffect(() => {
+    updateChar();
+    console.log('render');
+  }, [charSelected])
+  
+  // componentDidUpdate(prevProp) {
+  //   if (this.props.charSelected !== prevProp.charSelected) {
+  //     this.updateChar();
+  //   }
+  // }
+  const onChar = (char) => {
+    setChar(prev => char)
+    setLoading(false)
   };
-  componentDidMount() {
-    this.updateChar();
-  }
-  componentDidUpdate(prevProp) {
-    if (this.props.charSelected !== prevProp.charSelected) {
-      this.updateChar();
-    }
-  }
-  onChar = (char) => {
-    this.setState({ char, loading: false });
+  const onError = () => {
+    setError(true)
+    setLoading(false)
   };
-  onError = () => {
-    this.setState({ error: true, loading: false });
+  const onCharLoad = () => {
+    setLoading(true)
   };
-  onCharLoad = () => {
-    this.setState({ loading: true });
-  };
-  updateChar() {
-    const { charSelected } = this.props;
+  const updateChar = () => {
     if (!charSelected) {
       return;
     }
 
-    this.onCharLoad();
+    onCharLoad();
 
-    this.marService
+    marService
       .getCharacter(charSelected)
       .then((char) => {
-        this.onChar(char);
+        onChar(char);
       })
-      .catch(this.onError);
+      .catch(onError);
   }
-  render() {
-    const { char, loading, error } = this.state;
 
     const skeleton = char || loading || error ? null : <Skeleton />;
     const spinner = loading ? <Spinner /> : null;
@@ -63,7 +63,7 @@ class CharInfo extends Component {
         {content}
       </div>
     );
-  }
+  
 }
 
 const View = ({ char }) => {
