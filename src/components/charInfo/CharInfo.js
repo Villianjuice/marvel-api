@@ -1,4 +1,4 @@
-import { Component, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import MarvelService from '../../services/MarvelService';
@@ -10,44 +10,26 @@ import './charInfo.scss';
 
 const CharInfo = ({charSelected}) => {
   const [char, setChar] = useState(null) 
-  const [loading, setLoading] = useState(false)  
-  const [error, setError] = useState(false)  
 
-  const marService = new MarvelService();
+  const {loading, error, getCharacter} = MarvelService();
+  
   useEffect(() => {
     updateChar();
-    console.log('render');
   }, [charSelected])
-  
-  // componentDidUpdate(prevProp) {
-  //   if (this.props.charSelected !== prevProp.charSelected) {
-  //     this.updateChar();
-  //   }
-  // }
+
   const onChar = (char) => {
     setChar(prev => char)
-    setLoading(false)
   };
-  const onError = () => {
-    setError(true)
-    setLoading(false)
-  };
-  const onCharLoad = () => {
-    setLoading(true)
-  };
+
   const updateChar = () => {
     if (!charSelected) {
       return;
     }
 
-    onCharLoad();
-
-    marService
-      .getCharacter(charSelected)
+    getCharacter(charSelected)
       .then((char) => {
         onChar(char);
       })
-      .catch(onError);
   }
 
     const skeleton = char || loading || error ? null : <Skeleton />;

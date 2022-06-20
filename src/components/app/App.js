@@ -22,7 +22,7 @@ const App = () => {
             <RandomChar />
           </ErrorBoundary>
           <div className="char__content">
-            <ErrorBoundary>
+            <ErrorBoundary> 
               <CharList onCharSelected={onCharSelected} />
             </ErrorBoundary>
             <ErrorBoundary>
