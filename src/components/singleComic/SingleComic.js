@@ -1,7 +1,31 @@
 import './singleComic.scss';
 import xMen from '../../resources/img/x-men.png';
+import { useEffect, useState } from 'react';
+import useMarvelService from '../../services/MarvelService';
 
-const SingleComic = () => {
+const SingleComic = ({comicsSelected}) => {
+    const [comics, setComics] = useState([])
+
+    const {getComics, loading, error, clearError} = useMarvelService()
+
+    useEffect(() => {
+        updateComics()
+    }, [comicsSelected])
+
+    const onComics = (comics) => {
+        setComics(comics)
+    }
+
+    const updateComics = () => {
+        if (!comicsSelected) {
+            return
+        }
+
+        clearError()
+
+        getComics(comicsSelected).then(onComics)
+    }
+
     return (
         <div className="single-comic">
             <img src={xMen} alt="x-men" className="single-comic__img"/>

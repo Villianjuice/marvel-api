@@ -11,7 +11,7 @@ import './charInfo.scss';
 const CharInfo = ({charSelected}) => {
   const [char, setChar] = useState(null) 
 
-  const {loading, error, getCharacter} = MarvelService();
+  const {loading, error, getCharacter, clearError} = MarvelService();
   
   useEffect(() => {
     updateChar();
@@ -25,7 +25,7 @@ const CharInfo = ({charSelected}) => {
     if (!charSelected) {
       return;
     }
-
+    clearError()
     getCharacter(charSelected)
       .then((char) => {
         onChar(char);
