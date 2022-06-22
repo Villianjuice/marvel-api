@@ -1,16 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import App from './components/app/App';
-import useMarvelService from './services/MarvelService';
 
 import './style/style.scss';
 
-// const { getAllComics } = useMarvelService;
-
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>,
   document.getElementById('root'),
 );
