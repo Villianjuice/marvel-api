@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import SingleChar from '../../pages/singleChar/SingleChar';
 
 import AppHeader from '../appHeader/AppHeader';
 import Spinner from '../spinner/Spinner';
@@ -9,6 +8,7 @@ const CharPage = lazy(() => import('../../pages/charPage/CharPage'));
 const ComicsPage = lazy(() => import('../../pages/comicsPage/ComicsPage'));
 const SingleComic = lazy(() => import('../../pages/singleComic/SingleComic'));
 const NoMatchPage = lazy(() => import('../../pages/noMatchPage/NoMatchPage'));
+const SingleChar = lazy(() => import('../../pages/singleChar/SingleChar'));
 
 const App = () => {
   return (
