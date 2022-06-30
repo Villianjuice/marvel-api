@@ -6,7 +6,7 @@ import RandomChar from '../../components/randomChar/RandomChar';
 
 import decoration from '../../resources/img/vision.png';
 
-export const CharPage = () => {
+export default function CharPage ()  {
   const [charSelected, setCharSelected] = useState(null);
 
   const onCharSelected = (id) => {

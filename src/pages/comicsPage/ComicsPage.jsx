@@ -2,7 +2,7 @@ import React from 'react';
 import AppBanner from '../../components/appBanner/AppBanner';
 import ComicsList from '../../components/comicsList/ComicsList';
 
-export const ComicsPage = () => {
+export default function ComicsPage  ()  {
   return (
     <>
       <AppBanner />

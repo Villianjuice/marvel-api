@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import ErrorMessage from '../../components/errorMessage/ErrorMessage'
 
-export const NoMatchPage = () => {
+export default function NoMatchPage () {
   return (
     <div>
       <ErrorMessage />
