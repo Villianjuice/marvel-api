@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import SingleChar from '../../pages/singleChar/SingleChar';
 
 import AppHeader from '../appHeader/AppHeader';
 import Spinner from '../spinner/Spinner';
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/" element={<CharPage />} />
             <Route path="/comics" element={<ComicsPage />} />
             <Route path="/comics/:id" element={<SingleComic />} />
+            <Route path="/characters/:id" element={<SingleChar />} />
             <Route path="*" element={<NoMatchPage />} />
           </Routes>
         </Suspense>
