@@ -5,13 +5,29 @@ import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
+const setContent = (process, Component, newItemsLoading) => {
+  switch (process) {
+    case 'waiting':
+      return <Spinner />
+    case 'loading':
+      return newItemsLoading ? <Component/> : <Spinner />
+    
+    case 'confirmed':
+      return <Component/>
+    case 'error':
+      return <ErrorMessage />
+    default:
+      return new Error('error')
+  }
+}
+
 const CharList = ({ onCharSelected }) => {
   const [characters, setCharacters] = useState([]);
   const [newItemsLoading, setNewItemsLoading] = useState(false);
   const [offset, setOffset] = useState(300);
   const [charsEnded, setCharsEnded] = useState(false);
 
-  const { getAllCharacters, loading, error } = useMarvelService();
+  const { getAllCharacters, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     onRequest(offset, true);
@@ -32,7 +48,7 @@ const CharList = ({ onCharSelected }) => {
 
   const onRequest = (offset, initial) => {
     initial ? setNewItemsLoading(false) : setNewItemsLoading(true);
-    getAllCharacters(offset).then(onCharsLoaded);
+    getAllCharacters(offset).then(onCharsLoaded).then(() => setProcess('confirmed'));
   };
 
   const itemRefs = useRef([]);
@@ -73,12 +89,9 @@ const CharList = ({ onCharSelected }) => {
     return <ul className="char__grid">{characters}</ul>;
   };
 
-  const items = getItems(characters);
   return (
     <div className="char__list">
-      {loading && !newItemsLoading ? <Spinner /> : null}
-      {error ? <ErrorMessage /> : null}
-      {items}
+      {setContent(process, () => getItems(characters), newItemsLoading)}
       <button
         style={{ display: charsEnded ? 'none' : 'block' }}
         disabled={newItemsLoading}

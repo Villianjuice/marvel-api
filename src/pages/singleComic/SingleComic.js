@@ -6,13 +6,14 @@ import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import Spinner from '../../components/spinner/Spinner';
 import { Helmet } from 'react-helmet';
+import setContent from '../../utils/setContent';
 
 const SingleComic = () => {
   const { id } = useParams();
 
   const [comics, setComics] = useState([]);
 
-  const { getComics, loading, error, clearError } = useMarvelService();
+  const { getComics, loading, error, clearError, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     updateComics();
@@ -25,24 +26,18 @@ const SingleComic = () => {
   const updateComics = () => {
     clearError();
 
-    getComics(id).then(onComics);
+    getComics(id).then(onComics).then(() => setProcess('confirmed'))
   };
-
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error) ? <ComicView comics={comics} /> : null;
 
   return (
     <>
-      {errorMessage}
-      {spinner}
-      {content}
+      {setContent(process, ComicView, comics)}
     </>
   );
 };
 
-const ComicView = ({ comics }) => {
-  const { title, description, pageCount, thumbnail, language, price } = comics;
+const ComicView = ({ data }) => {
+  const { title, description, pageCount, thumbnail, language, price } = data;
 
   return (
     <div className="single-comic">

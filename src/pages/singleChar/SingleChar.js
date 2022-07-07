@@ -4,15 +4,14 @@ import { Helmet } from 'react-helmet';
 
 import './singleChar.scss';
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../../components/errorMessage/ErrorMessage';
-import Spinner from '../../components/spinner/Spinner';
+import setContent from '../../utils/setContent';
 
 const SingleChar = () => {
   const { id } = useParams();
 
   const [data, setData] = useState([]);
 
-  const { getCharacter, loading, error, clearError } = useMarvelService();
+  const { getCharacter, clearError, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -25,18 +24,12 @@ const SingleChar = () => {
   const updateChar = () => {
     clearError();
 
-    getCharacter(id).then(onCharLoaded);
+    getCharacter(id).then(onCharLoaded).then(() => setProcess('confirmed'));
   };
-
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error) ? <CharView data={data} /> : null;
 
   return (
     <>
-      {errorMessage}
-      {spinner}
-      {content}
+      {setContent(process, CharView, data)}
     </>
   );
 };
